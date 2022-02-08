@@ -3,14 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Gallery/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.121" />
-        <entry key="..\:/Gallery/app/src/main/res/drawable/ic_launcher_background.xml" value="0.121" />
         <entry key="..\:/Gallery/app/src/main/res/layout/activity_main.xml" value="0.2151268115942029" />
-        <entry key="..\:/ITU/GitHub/MAD/Gallery/app/src/main/res/layout/activity_backup_images.xml" value="0.15172101449275363" />
-        <entry key="..\:/ITU/GitHub/MAD/Gallery/app/src/main/res/layout/activity_main.xml" value="0.16666666666666666" />
-        <entry key="..\:/Gallery/app/src/main/res/menu/main_menu.xml" value="0.264" />
-        <entry key="..\:/ITU/GitHub/MAD/Gallery/app/src/main/res/layout/activity_main.xml" value="0.10144927536231885" />
+        <entry key="..\:/ITU/Semester 7/App Development/Gallery/app/src/main/res/layout/activity_backup_images.xml" value="0.379981884057971" />
+        <entry key="..\:/ITU/Semester 7/App Development/Gallery/app/src/main/res/layout/activity_image_view.xml" value="0.37083333333333335" />
         <entry key="..\:/ITU/Semester 7/App Development/Gallery/app/src/main/res/layout/activity_main.xml" value="0.37083333333333335" />
+        <entry key="..\:/ITU/Semester 7/App Development/Gallery/app/src/main/res/layout/view_image.xml" value="0.38405797101449274" />
+        <entry key="..\:/ITU/Semester 7/App Development/Gallery/app/src/main/res/menu/details_menu.xml" value="0.3859375" />
         <entry key="..\:/ITU/Semester 7/App Development/Gallery/app/src/main/res/menu/main_menu.xml" value="0.3859375" />
         <entry key="..\:/ITU/Semester 7/App Development/Gallery/app/src/main/res/menu/menu.xml" value="0.3859375" />
       </map>

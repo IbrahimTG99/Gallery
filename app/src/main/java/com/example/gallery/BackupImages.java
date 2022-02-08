@@ -35,11 +35,14 @@ public class BackupImages extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_backup_images);
-        imagelist=new ArrayList<>();
-        recyclerView=findViewById(R.id.recyclerview);
-        adapter=new ImageAdapter(imagelist,this);
+
+
+
+        imagelist = new ArrayList<>();
+        recyclerView = findViewById(R.id.recyclerview);
+        adapter = new ImageAdapter(imagelist,this);
         recyclerView.setLayoutManager(new LinearLayoutManager(null));
-        progressBar=findViewById(R.id.progress);
+        progressBar = findViewById(R.id.progress);
         progressBar.setVisibility(View.VISIBLE);
         StorageReference listRef = FirebaseStorage.getInstance().getReference().child("images");
         listRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {

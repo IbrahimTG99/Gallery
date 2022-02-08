@@ -61,11 +61,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.backup_menu:
-//                Intent intent = new Intent(MainActivity.this, Settings.class);
-//                intent.putExtra("name", pic_name);
-//                intent.putExtra("path", pic_path);
-//                startActivity(intent);
-                Toast.makeText(getApplicationContext(), "Backup selected", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, BackupImages.class);
+                startActivity(intent);
+//                Toast.makeText(getApplicationContext(), "Backup selected", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.restore_menu:
                 Toast.makeText(getApplicationContext(), "Restore selected", Toast.LENGTH_SHORT).show();

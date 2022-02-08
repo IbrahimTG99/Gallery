@@ -90,7 +90,6 @@ public class viewImage extends AppCompatActivity {
             name = b.getString("name");
             hidden = b.getBoolean("hidden");
         }
-        Toast.makeText(this, hidden+"", Toast.LENGTH_SHORT).show();
 
         ImageView picture_img = findViewById(R.id.picture_img);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
