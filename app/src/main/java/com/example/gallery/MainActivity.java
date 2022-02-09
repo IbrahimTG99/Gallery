@@ -1,5 +1,7 @@
 package com.example.gallery;
 
+import static java.util.Base64.getDecoder;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -32,13 +35,19 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     RestoreData();
-                                    Toast.makeText(getApplicationContext(), "Restore Data", Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .show();
@@ -337,11 +345,12 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0;  i < 2; i++)
         {
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bitmap = BitmapFactory.decodeFile(pictures.get(0).getPath(), bmOptions);
+            Bitmap bitmap = BitmapFactory.decodeFile(pictures.get(i).getPath(), bmOptions);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] byteArray = baos.toByteArray();
             String imageB64 = Base64.encodeToString(byteArray, Base64.URL_SAFE);
+            pics.put("name"+i, pictures.get(i).getName());
             pics.put("pic"+i, imageB64);
         }
         String TAG = "*************";
@@ -365,7 +374,72 @@ public class MainActivity extends AppCompatActivity {
 
     private void RestoreData()
     {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        String TAG = "*************";
+
+        Toast.makeText(getApplicationContext(), "Restoring Data", Toast.LENGTH_LONG).show();
+        db.collection("pics")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " Data retrieved");
+                                Map<String, Object> map = document.getData();
+                                long images = (long) map.get("size");
+
+                                for (int i = 0; i < 1; i++)
+                                {
+                                    String image64 = (String) map.get("pic"+i);
+
+                                    FileOutputStream fos;
+
+                                    Log.d("*********************", image64);
+                                    byte[] byteArray = Base64.decode(image64, Base64.DEFAULT);
+                                    Bitmap decodedByte = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+//                                    Toast.makeText(getApplicationContext(), "byteArray.length", Toast.LENGTH_SHORT).show();
+//                                    Bitmap decodedImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//
+                                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), map.get("name"+i).toString());
+                                    if (!file.exists())
+                                    {
+                                        try {
+                                            file.createNewFile();
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                    }
+//                                        FileOutputStream fout = new FileOutputStream(file);
+//                                        fout.write("byteArray".getBytes());
+//                                        fout.flush();
+//                                        fout.close();
+
+//                                    try {
+//                                        fos = new FileOutputStream(file);
+//                                        decodedImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+//                                        fos.flush();
+//                                        fos.close();
+//                                    }
+//                                    catch (Exception e)
+//                                    {
+//                                        e.printStackTrace();
+//                                    }
+
+                                }
+
+                                Toast.makeText(getApplicationContext(), "Data has been restored successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Log.w(TAG, "Error getting documents.", task.getException());
+                            Toast.makeText(getApplicationContext(), "Error during data retrieval", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     public class Picture {

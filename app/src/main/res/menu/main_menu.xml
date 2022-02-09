@@ -9,7 +9,7 @@
         android:title="Restore Data" />
     <item
         android:id="@+id/log_menu"
-        android:title="Login / Logout" />
+        android:title="Login" />
     <item
         android:id="@+id/hidden_menu"
         android:title="Vault" />
