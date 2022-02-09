@@ -1,13 +1,14 @@
 package com.example.gallery;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -15,39 +16,40 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    LinearLayout linearLayout;
     boolean Vault_open = false;
+    String Username = "";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -61,18 +63,62 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.backup_menu:
-                Intent intent = new Intent(MainActivity.this, BackupImages.class);
-                startActivity(intent);
-//                Toast.makeText(getApplicationContext(), "Backup selected", Toast.LENGTH_SHORT).show();
+                if (Username.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Please login before backup", Toast.LENGTH_SHORT).show();
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Backup Data")
+                            .setMessage("Do you want to backup all pictures?")
+                            .setCancelable(false)
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    backupData();
+                                }
+                            })
+                            .show();
+                }
                 return true;
+
             case R.id.restore_menu:
-                Toast.makeText(getApplicationContext(), "Restore selected", Toast.LENGTH_SHORT).show();
+                if (Username.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Please login before restoring", Toast.LENGTH_SHORT).show();
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Restore Data")
+                            .setMessage("Do you want to restore backed up pictures?")
+                            .setCancelable(false)
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    RestoreData();
+                                    Toast.makeText(getApplicationContext(), "Restore Data", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .show();
+                }
                 return true;
             case R.id.log_menu:
-                Toast.makeText(getApplicationContext(), "Login/Logout selected", Toast.LENGTH_SHORT).show();
+                if (Username.equals("")) {
+                    Intent i = new Intent(MainActivity.this, Login.class);
+                    startActivityForResult(i, 999);
+                } else {
+                    Toast.makeText(getApplicationContext(), "You are already logged in", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             case R.id.hidden_menu:
-                Toast.makeText(this, Vault_open+"", Toast.LENGTH_SHORT).show();
                 if (!Vault_open)
                 {
                     Vault_open = true;
@@ -125,9 +171,21 @@ public class MainActivity extends AppCompatActivity {
         showImages(false, getAllImagesByFolder());
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 999) {
+            if (resultCode == RESULT_OK) {
+                Username = data.getStringExtra("mail");
+            }
+        }
+    }
+
     void showImages(boolean ascending, ArrayList<Picture> pictures)
     {
-        linearLayout = findViewById(R.id.gallery_ll);
+        LinearLayout linearLayout = findViewById(R.id.gallery_ll);
         linearLayout.removeAllViews();
 
 //        ArrayList<Picture> pictures = getAllImagesByFolder();
@@ -262,6 +320,52 @@ public class MainActivity extends AppCompatActivity {
                 images.add(p);
         }
         return images;
+    }
+
+    private void backupData()
+    {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, Object> pics = new HashMap<>();
+        ArrayList<Picture> pictures = getAllImagesByFolder();
+
+        pics.put("mail", Username);
+        pics.put("size", pictures.size());
+
+        Toast.makeText(getApplicationContext(), "Backup in progress", Toast.LENGTH_LONG).show();
+
+//        for (int i = 0; i < pictures.size(); i++)
+        for(int i = 0;  i < 2; i++)
+        {
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bitmap = BitmapFactory.decodeFile(pictures.get(0).getPath(), bmOptions);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] byteArray = baos.toByteArray();
+            String imageB64 = Base64.encodeToString(byteArray, Base64.URL_SAFE);
+            pics.put("pic"+i, imageB64);
+        }
+        String TAG = "*************";
+        db.collection("pics")
+                .add(pics)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                        Toast.makeText(getApplicationContext(), "Backup successful", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                        Toast.makeText(getApplicationContext(), "Unable to backup data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void RestoreData()
+    {
+
     }
 
     public class Picture {
