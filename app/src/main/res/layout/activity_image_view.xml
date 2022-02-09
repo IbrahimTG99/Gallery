@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        app:srcCompat="@drawable/ic_launcher_foreground" />
 
     <Button
         android:id="@+id/share_btn"
@@ -23,6 +23,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginBottom="40dp"
         android:text="Share"
+        android:fontFamily="@font/roboto"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -33,6 +34,7 @@
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="40dp"
         android:text="Delete"
+        android:fontFamily="@font/roboto"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
