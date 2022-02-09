@@ -8,10 +8,14 @@
 
     <TextView
         android:id="@+id/log_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="157dp"
+        android:layout_height="76dp"
         android:layout_marginTop="32dp"
+        android:fontFamily="@font/roboto"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:text="Login"
+        android:textSize="60sp"
+        android:textColor="@color/md_theme_dark_surfaceVariant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,8 +24,8 @@
         android:id="@+id/email_edt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="272dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginEnd="60dp"
         android:ems="10"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,9 +35,11 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="284dp"
-        android:text="Email"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="310dp"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/md_theme_dark_surfaceVariant"
+        android:text="Email:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginEnd="60dp"
         android:ems="10"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,9 +58,11 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="116dp"
-        android:text="Password"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="124dp"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/md_theme_dark_surfaceVariant"
+        android:text="Password:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -62,8 +70,11 @@
         android:id="@+id/log_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="104dp"
         android:text="Login"
+        android:fontFamily="@font/roboto"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="564dp" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
